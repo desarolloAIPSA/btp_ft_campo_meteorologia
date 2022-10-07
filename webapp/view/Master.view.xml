@@ -1,0 +1,437 @@
+<mvc:View controllerName="aip.meteorologia.controller.Master"
+    xmlns:mvc="sap.ui.core.mvc" displayBlock="true"
+    xmlns="sap.m"
+    xmlns:t="sap.ui.table"
+    xmlns:c="sap.ui.core"
+    >
+    <Page id="a" title="{i18n>title}">
+        <content>
+            <Panel id="_IDGenPanel1" accessibleRole="Region">
+
+                <t:Table id="tblMain"
+                    visibleRowCount="14"
+                    class="sapUiResponsiveMargin" 
+                    width="auto"
+                    rowActionCount="1"
+                    rows="{/}"
+                    selectionMode="Single"
+                    enableBusyIndicator="true" > <!-- rows="{oData>/solpedSet}"  rows="{oData>/results}" -->
+                    <t:extension>
+                        <OverflowToolbar id="_IDGenOverflowToolbar1" class="sapUiSmallMarginBottom" >
+                            <content>
+                                <!--<DateRangeSelection id="txtFechas" width="20%" placeholder="Fecha Solicitud (rango)" />-->
+                                <VBox id="vb1" height="2em" width="11%">
+                                <DatePicker id="dp1" width="100%"
+                                            placeholder="Fecha Desde"
+                                            valueFormat="yyyyMMdd"
+                                            change="handleChange"
+                                            class="sapUiSmallMarginBottom"
+                                            />
+                                </VBox>
+                                <VBox id="vb2" height="2em" width="11%">
+                                <DatePicker id="dp2" width="100%"
+                                            placeholder="Fecha Hasta"
+                                            valueFormat="yyyyMMdd"
+                                            change="handleChange"
+                                            class="sapUiSmallMarginBottom"
+                                            /> 
+                                </VBox>
+                                
+                                <Input id="txtEstacion" placeholder="Estacion" width="10%" showValueHelp="true"
+                                        liveChange="onChangeEstacion"
+                                        valueHelpRequest="onOpenDialogPressEstacion"
+                                        >
+                                        
+                                </Input>
+
+                                <!-- Botón para acción de filtro -->
+                                <Button id="btnFiltro" 
+                                    icon="sap-icon://filter"
+                                    tooltip="{i18n>filterButtonText}"
+                                    press=".onFilter"/>
+                                <!---->
+                                <ToolbarSpacer id="_IDGenToolbarSpacer1" />
+					            <!-- Botón para exportar tabla en Excel -->
+                                <Button id="_IDGenButton2" 
+                                    icon="sap-icon://excel-attachment"
+                                    tooltip="{i18n>exportButtonText}"
+                                    press="onExport"/>
+                            </content>
+                        </OverflowToolbar>
+                    </t:extension>
+                    <t:columns>
+                        <t:Column id="_IDGenColumn1" width="8rem" showSortMenuEntry="true" sortProperty="fecha">
+                            <Label id="_IDGenLabel1" text="{i18n>FECHA}" />
+                            <t:template>
+                                <Text id="_IDGenText1" text="{ path : 'fecha',
+                                                                formatter : '.formatter.fechahora' }" wrapping="false" />
+                            </t:template>
+                        </t:Column>
+                        <t:Column id="_IDGenColumn2" width="6rem" showSortMenuEntry="true" sortProperty="meteorolEstacion">
+                            <Label id="_IDGenLabel2" text="{i18n>METEOROLESTACION}" />
+                            <t:template>
+                                <Text id="_IDGenText2" text="{meteorolEstacion}" wrapping="false" />
+                            </t:template>
+                        </t:Column>
+                        <t:Column id="_IDGenColumn3" width="6rem" showSortMenuEntry="true" sortProperty="tempOut">
+                            <Label id="_IDGenLabel3" text="{i18n>TEMPOUT}" />
+                            <t:template>
+                                <ObjectNumber id="_IDGenText3"
+                                            textAlign="End" 
+                                            emphasized="false"
+                                            number="{ path: 'tempOut',
+                                                      formatter: '.formatter.numero' }" />
+                            </t:template>
+                        </t:Column>
+                        <t:Column id="_IDGenColumn4" width="6rem" showSortMenuEntry="true" sortProperty="hiTemp">
+                            <Label id="_IDGenLabel4" text="{i18n>HITEMP}" />
+                            <t:template>
+                                <ObjectNumber id="_IDGenText4"
+                                            textAlign="End" 
+                                            emphasized="false"
+                                            number="{ path: 'hiTemp',
+                                                      formatter: '.formatter.numero' }" />
+                            </t:template>
+                        </t:Column>
+                        <t:Column id="_IDGenColumn5" width="6rem" showSortMenuEntry="true" sortProperty="lowTemp">
+                            <Label id="_IDGenLabel5" text="{i18n>LOWTEMP}" />
+                            <t:template>
+                                <ObjectNumber id="_IDGenText5"
+                                            textAlign="End" 
+                                            emphasized="false"
+                                            number="{ path: 'lowTemp',
+                                                      formatter: '.formatter.numero' }" />
+                            </t:template>
+                        </t:Column>
+                        <t:Column id="_IDGenColumn6" width="6rem" showSortMenuEntry="true" sortProperty="outHum">
+                            <Label id="_IDGenLabel6" text="{i18n>OUTHUM}" />
+                            <t:template>
+                                <ObjectNumber id="_IDGenText6"
+                                            textAlign="End" 
+                                            emphasized="false"
+                                            number="{ path: 'outHum',
+                                                      formatter: '.formatter.numero' }" />
+                            </t:template>
+                        </t:Column>
+                        <t:Column id="_IDGenColumn7" width="6rem" showSortMenuEntry="true" sortProperty="dewPt">
+                            <Label id="_IDGenLabel7" text="{i18n>DEWPT}" />
+                            <t:template>
+                                <ObjectNumber id="_IDGenText7"
+                                            textAlign="End" 
+                                            emphasized="false"
+                                            number="{ path: 'dewPt',
+                                                      formatter: '.formatter.numero' }" />
+                            </t:template>
+                        </t:Column>
+                        <t:Column id="_IDGenColumn8" width="6rem" showSortMenuEntry="true" sortProperty="windSpeed">
+                            <Label id="_IDGenLabel8" text="{i18n>WINDSPEED}" />
+                            <t:template>
+                                <ObjectNumber id="_IDGenText8"
+                                            textAlign="End" 
+                                            emphasized="false"
+                                            number="{ path: 'windSpeed',
+                                                      formatter: '.formatter.numero' }" />
+                            </t:template>
+                        </t:Column>
+                        <t:Column id="_IDGenColumn9" width="6rem" showSortMenuEntry="true" sortProperty="windDir">
+                            <Label id="_IDGenLabel9" text="{i18n>WINDDIR}" />
+                            <t:template>
+                                <Text id="_IDGenText9" text="{windDir}" wrapping="false" />
+                            </t:template>
+                        </t:Column>
+                        <t:Column id="_IDGenColumn10" width="6rem" showSortMenuEntry="true" sortProperty="windRun">
+                            <Label id="_IDGenLabel10" text="{i18n>WINDRUN}" />
+                            <t:template>
+                                <ObjectNumber id="_IDGenText10"
+                                            textAlign="End" 
+                                            emphasized="false"
+                                            number="{ path: 'windRun',
+                                                      formatter: '.formatter.numero' }" />
+                            </t:template>
+                        </t:Column>
+                        <t:Column id="_IDGenColumn11" width="6rem" showSortMenuEntry="true" sortProperty="hiSpeed">
+                            <Label id="_IDGenLabel11" text="{i18n>HISPEED}" />
+                            <t:template>
+                                <ObjectNumber id="_IDGenText11"
+                                            textAlign="End" 
+                                            emphasized="false"
+                                            number="{ path: 'hiSpeed',
+                                                      formatter: '.formatter.numero' }" />
+                            </t:template>
+                        </t:Column>
+                        <t:Column id="_IDGenColumn12" width="6rem" showSortMenuEntry="true" sortProperty="hiDir">
+                            <Label id="_IDGenLabel13" text="{i18n>HIDIR}" />
+                            <t:template>
+                                <Text id="_IDGenText13" text="{hiDir}" wrapping="false" />
+                            </t:template>
+                        </t:Column>
+                        <t:Column id="_IDGenColumn14" width="6rem" showSortMenuEntry="true" sortProperty="windChill">
+                            <Label id="_IDGenLabel14" text="{i18n>WINDCHILL}" />
+                            <t:template>
+                                <ObjectNumber id="_IDGenText14"
+                                            textAlign="End" 
+                                            emphasized="false"
+                                            number="{ path: 'windChill',
+                                                      formatter: '.formatter.numero' }" />
+                            </t:template>
+                        </t:Column>
+                        <t:Column id="_IDGenColumn15" width="6rem" showSortMenuEntry="true" sortProperty="heatIndex">
+                            <Label id="_IDGenLabel15" text="{i18n>HEATINDEX}" />
+                            <t:template>
+                                <ObjectNumber id="_IDGenText15"
+                                            textAlign="End" 
+                                            emphasized="false"
+                                            number="{ path: 'heatIndex',
+                                                      formatter: '.formatter.numero' }" />
+                            </t:template>
+                        </t:Column>
+                        <t:Column id="_IDGenColumn16" width="6rem" showSortMenuEntry="true" sortProperty="thxIndex">
+                            <Label id="_IDGenLabel16" text="{i18n>THXINDEX}" />
+                            <t:template>
+                                <ObjectNumber id="_IDGenText16"
+                                            textAlign="End" 
+                                            emphasized="false"
+                                            number="{ path: 'thxIndex',
+                                                      formatter: '.formatter.numero' }" />
+                            </t:template>
+                        </t:Column>
+                        <t:Column id="_IDGenColumn17" width="6rem" showSortMenuEntry="true" sortProperty="thswIndex">
+                            <Label id="_IDGenLabel17" text="{i18n>THSWINDEX}" />
+                            <t:template>
+                                <ObjectNumber id="_IDGenText17"
+                                            textAlign="End" 
+                                            emphasized="false"
+                                            number="{ path: 'thswIndex',
+                                                      formatter: '.formatter.numero' }" />
+                            </t:template>
+                        </t:Column>
+                        <t:Column id="_IDGenColumn18" width="6rem" showSortMenuEntry="true" sortProperty="bar">
+                            <Label id="_IDGenLabel18" text="{i18n>BAR}" />
+                            <t:template>
+                                <ObjectNumber id="_IDGenText18"
+                                            textAlign="End" 
+                                            emphasized="false"
+                                            number="{ path: 'bar',
+                                                      formatter: '.formatter.numero' }" />
+                            </t:template>
+                        </t:Column>
+                        <t:Column id="_IDGenColumn19" width="6rem" showSortMenuEntry="true" sortProperty="rain">
+                            <Label id="_IDGenLabel19" text="{i18n>RAIN}" />
+                            <t:template>
+                                <ObjectNumber id="_IDGenText19"
+                                            textAlign="End" 
+                                            emphasized="false"
+                                            number="{ path: 'rain',
+                                                      formatter: '.formatter.numero' }" />
+                            </t:template>
+                        </t:Column>
+                        <t:Column id="_IDGenColumn20" width="6rem" showSortMenuEntry="true" sortProperty="rainRate">
+                            <Label id="_IDGenLabel20" text="{i18n>RAINRATE}" />
+                            <t:template>
+                                <ObjectNumber id="_IDGenText20"
+                                            textAlign="End" 
+                                            emphasized="false"
+                                            number="{ path: 'rainRate',
+                                                      formatter: '.formatter.numero' }" />
+                            </t:template>
+                        </t:Column>
+                        <t:Column id="_IDGenColumn21" width="6rem" showSortMenuEntry="true" sortProperty="solarRad">
+                            <Label id="_IDGenLabel21" text="{i18n>SOLARRAD}" />
+                            <t:template>
+                                <ObjectNumber id="_IDGenText21"
+                                            textAlign="End" 
+                                            emphasized="false"
+                                            number="{ path: 'solarRad',
+                                                      formatter: '.formatter.numero' }" />
+                            </t:template>
+                        </t:Column>
+                        <t:Column id="_IDGenColumn22" width="6rem" showSortMenuEntry="true" sortProperty="solarEnergy">
+                            <Label id="_IDGenLabel23" text="{i18n>SOLARENERGY}" />
+                            <t:template>
+                                <ObjectNumber id="_IDGenText23"
+                                            textAlign="End" 
+                                            emphasized="false"
+                                            number="{ path: 'solarEnergy',
+                                                      formatter: '.formatter.numero' }" />
+                            </t:template>
+                        </t:Column>
+                        <t:Column id="_IDGenColumn24" width="6rem" showSortMenuEntry="true" sortProperty="hiRad">
+                            <Label id="_IDGenLabel24" text="{i18n>HIRAD}" />
+                            <t:template>
+                                <ObjectNumber id="_IDGenText24"
+                                            textAlign="End" 
+                                            emphasized="false"
+                                            number="{ path: 'hiRad',
+                                                      formatter: '.formatter.numero' }" />
+                            </t:template>
+                        </t:Column>
+                        <t:Column id="_IDGenColumn25" width="6rem" showSortMenuEntry="true" sortProperty="solarUvIndex">
+                            <Label id="_IDGenLabel25" text="{i18n>SOLARUVINDEX}" />
+                            <t:template>
+                                <ObjectNumber id="_IDGenText25"
+                                            textAlign="End" 
+                                            emphasized="false"
+                                            number="{ path: 'solarUvIndex',
+                                                      formatter: '.formatter.numero' }" />
+                            </t:template>
+                        </t:Column>
+                        <t:Column id="_IDGenColumn26" width="6rem" showSortMenuEntry="true" sortProperty="uvDose">
+                            <Label id="_IDGenLabel26" text="{i18n>UVDOSE}" />
+                            <t:template>
+                                <ObjectNumber id="_IDGenText26"
+                                            textAlign="End" 
+                                            emphasized="false"
+                                            number="{ path: 'uvDose',
+                                                      formatter: '.formatter.numero' }" />
+                            </t:template>
+                        </t:Column>
+                        <t:Column id="_IDGenColumn27" width="6rem" showSortMenuEntry="true" sortProperty="hiUv">
+                            <Label id="_IDGenLabel27" text="{i18n>HIUV}" />
+                            <t:template>
+                                <ObjectNumber id="_IDGenText27"
+                                            textAlign="End" 
+                                            emphasized="false"
+                                            number="{ path: 'hiUv',
+                                                      formatter: '.formatter.numero' }" />
+                            </t:template>
+                        </t:Column>
+                        <t:Column id="_IDGenColumn28" width="6rem" showSortMenuEntry="true" sortProperty="heatDd">
+                            <Label id="_IDGenLabel28" text="{i18n>HEATDD}" />
+                            <t:template>
+                                <ObjectNumber id="_IDGenText28"
+                                            textAlign="End" 
+                                            emphasized="false"
+                                            number="{ path: 'heatDd',
+                                                      formatter: '.formatter.numero' }" />
+                            </t:template>
+                        </t:Column>
+                        <t:Column id="_IDGenColumn29" width="6rem" showSortMenuEntry="true" sortProperty="coolDd">
+                            <Label id="_IDGenLabel29" text="{i18n>COOLDD}" />
+                            <t:template>
+                                <ObjectNumber id="_IDGenText29"
+                                            textAlign="End" 
+                                            emphasized="false"
+                                            number="{ path: 'coolDd',
+                                                      formatter: '.formatter.numero' }" />
+                            </t:template>
+                        </t:Column>
+                        <t:Column id="_IDGenColumn30" width="6rem" showSortMenuEntry="true" sortProperty="inTemp">
+                            <Label id="_IDGenLabel30" text="{i18n>INTEMP}" />
+                            <t:template>
+                                <ObjectNumber id="_IDGenText30"
+                                            textAlign="End" 
+                                            emphasized="false"
+                                            number="{ path: 'inTemp',
+                                                      formatter: '.formatter.numero' }" />
+                            </t:template>
+                        </t:Column>
+                        <t:Column id="_IDGenColumn31" width="6rem" showSortMenuEntry="true" sortProperty="inHum">
+                            <Label id="_IDGenLabel31" text="{i18n>INHUM}" />
+                            <t:template>
+                                <ObjectNumber id="_IDGenText31"
+                                            textAlign="End" 
+                                            emphasized="false"
+                                            number="{ path: 'inHum',
+                                                      formatter: '.formatter.numero' }" />
+                            </t:template>
+                        </t:Column>
+                        <t:Column id="_IDGenColumn32" width="6rem" showSortMenuEntry="true" sortProperty="inDew">
+                            <Label id="_IDGenLabel32" text="{i18n>INDEW}" />
+                            <t:template>
+                                <ObjectNumber id="_IDGenText32"
+                                            textAlign="End" 
+                                            emphasized="false"
+                                            number="{ path: 'inDew',
+                                                      formatter: '.formatter.numero' }" />
+                            </t:template>
+                        </t:Column>
+                        <t:Column id="_IDGenColumn33" width="6rem" showSortMenuEntry="true" sortProperty="inHeat">
+                            <Label id="_IDGenLabel33" text="{i18n>INHEAT}" />
+                            <t:template>
+                                <ObjectNumber id="_IDGenText33"
+                                            textAlign="End" 
+                                            emphasized="false"
+                                            number="{ path: 'inHeat',
+                                                      formatter: '.formatter.numero' }" />
+                            </t:template>
+                        </t:Column>
+                        <t:Column id="_IDGenColumn34" width="6rem" showSortMenuEntry="true" sortProperty="inEmc">
+                            <Label id="_IDGenLabel34" text="{i18n>INEMC}" />
+                            <t:template>
+                                <ObjectNumber id="_IDGenText34"
+                                            textAlign="End" 
+                                            emphasized="false"
+                                            number="{ path: 'inEmc',
+                                                      formatter: '.formatter.numero' }" />
+                            </t:template>
+                        </t:Column>
+                        <t:Column id="_IDGenColumn35" width="6rem" showSortMenuEntry="true" sortProperty="inAirDensity">
+                            <Label id="_IDGenLabel35" text="{i18n>INAIRDENSITY}" />
+                            <t:template>
+                                <ObjectNumber id="_IDGenText35"
+                                            textAlign="End" 
+                                            emphasized="false"
+                                            number="{ path: 'inAirDensity',
+                                                      formatter: '.formatter.numero' }" />
+                            </t:template>
+                        </t:Column>
+                        <t:Column id="_IDGenColumn36" width="6rem" showSortMenuEntry="true" sortProperty="et">
+                            <Label id="_IDGenLabel36" text="{i18n>ET}" />
+                            <t:template>
+                                <ObjectNumber id="_IDGenText36"
+                                            textAlign="End" 
+                                            emphasized="false"
+                                            number="{ path: 'et',
+                                                      formatter: '.formatter.numero' }" />
+                            </t:template>
+                        </t:Column>
+                        <t:Column id="_IDGenColumn37" width="6rem" showSortMenuEntry="true" sortProperty="windSamp">
+                            <Label id="_IDGenLabel37" text="{i18n>WINDSAMP}" />
+                            <t:template>
+                                <ObjectNumber id="_IDGenText37"
+                                            textAlign="End" 
+                                            emphasized="false"
+                                            number="{ path: 'windSamp',
+                                                      formatter: '.formatter.numero' }" />
+                            </t:template>
+                        </t:Column>
+                        <t:Column id="_IDGenColumn38" width="6rem" showSortMenuEntry="true" sortProperty="windTx">
+                            <Label id="_IDGenLabel38" text="{i18n>WINDTX}" />
+                            <t:template>
+                                <ObjectNumber id="_IDGenText38"
+                                            textAlign="End" 
+                                            emphasized="false"
+                                            number="{ path: 'windTx',
+                                                      formatter: '.formatter.numero' }" />
+                            </t:template>
+                        </t:Column>
+                        <t:Column id="_IDGenColumn39" width="6rem" showSortMenuEntry="true" sortProperty="issRecept">
+                            <Label id="_IDGenLabel39" text="{i18n>ISSRECEPT}" />
+                            <t:template>
+                                <ObjectNumber id="_IDGenText39"
+                                            textAlign="End" 
+                                            emphasized="false"
+                                            number="{ path: 'issRecept',
+                                                      formatter: '.formatter.numero' }" />
+                            </t:template>
+                        </t:Column>
+                        <t:Column id="_IDGenColumn40" width="6rem" showSortMenuEntry="true" sortProperty="arcInt">
+                            <Label id="_IDGenLabel40" text="{i18n>ARCINT}" />
+                            <t:template>
+                                <ObjectNumber id="_IDGenText40"
+                                            textAlign="End" 
+                                            emphasized="false"
+                                            number="{ path: 'arcInt',
+                                                      formatter: '.formatter.numero' }" />
+                            </t:template>
+                        </t:Column>
+                    </t:columns>
+
+
+
+                </t:Table>
+
+            </Panel>        
+        </content>
+    </Page>
+</mvc:View>
