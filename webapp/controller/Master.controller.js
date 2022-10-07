@@ -21,7 +21,7 @@ sap.ui.define([
         var EdmType = exportLibrary.EdmType;
 
         //CONSTANTES
-        const PATH_SERVICE='https://www.agroparamonga.com/q_meteorologia';
+        const PATH_SERVICE='https://www.agroparamonga.com/p_meteorologia';
         
         var oPageController = Controller.extend("aip.meteorologia.controller.Master", {
             formatter: Formatter,
@@ -49,7 +49,7 @@ sap.ui.define([
                 await this._estaciones();
                 this._loadMatchcodeEstacion();
 
-                this._consulta(dataQuery);
+                //this._consulta(dataQuery);
                 /* $.ajax({ 
                     //url:`https://www.agroparamonga.com/ppeso/muestra/pa?page=0&size=100&bal=08&fecIni=${date}&fecFin=${date}`,
                     url:`https://www.agroparamonga.com/q_meteorologia/metereologia/byDateRange?estacion=000003&fecfin=20150807&fecini=20150807`,   
@@ -125,7 +125,7 @@ sap.ui.define([
             _consulta:function(dataQuery){
                 var that=this;
                 $.ajax({ 
-                    url:`https://www.agroparamonga.com/q_meteorologia/metereologia/byDateRange`,   
+                    url:`https://www.agroparamonga.com/p_meteorologia/metereologia/byDateRange`,   
                     dataType: "json",
                     data:dataQuery,
                     success: function(result) {
