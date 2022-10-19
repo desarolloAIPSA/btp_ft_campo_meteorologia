@@ -1,16 +1,20 @@
 sap.ui.define([
     'sap/ui/core/mvc/Controller',
+    "sap/ui/model/json/JSONModel",
     "../model/Formatter",
     "sap/m/MessageBox",
+    "sap/m/MessageToast",
     "sap/ui/export/Spreadsheet",
     "sap/ui/export/library"
 ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller, Formatter, MessageBox, Spreadsheet, exportLibrary) {
+    function (Controller,JSONModel, Formatter, MessageBox, MessageToast, Spreadsheet, exportLibrary) {
         "use strict";
         var that;
+        var busyDialog = new sap.m.BusyDialog();
+
         //JSONModel
         var estacionModel;
 
@@ -26,54 +30,37 @@ sap.ui.define([
         var oPageController = Controller.extend("aip.meteorologia.controller.Master", {
             formatter: Formatter,
             onInit: async function () {
+                //this._getUserName();            
+                this._version();
                 var that=this;
                 console.log("onInit");
-                //Valores iniciales
-                var fecha = new Date().toISOString().substring(0, 10);
-                console.log(`fecha: ${fecha}`);
-
-                //fechaIn.toISOString().substring(0, 11)+'06:00:00';
-
-                //var fechaIni = this._fechas(dt);
-                //dt.setDate(dt.getDate()-1);
-                //var fechaFin = this._fechas(dt);
-                this.byId("dp1").setValue(fecha);
-                this.byId("dp2").setValue(fecha);
-                
-                var dataQuery={
-                    estacion:'000003',
-                    fecini:'20150807',
-                    fecfin:'20150807'
-                };
+                this._setFechas();
                 //Estaciones
                 await this._estaciones();
                 this._loadMatchcodeEstacion();
-
-                //this._consulta(dataQuery);
-                /* $.ajax({ 
-                    //url:`https://www.agroparamonga.com/ppeso/muestra/pa?page=0&size=100&bal=08&fecIni=${date}&fecFin=${date}`,
-                    url:`https://www.agroparamonga.com/q_meteorologia/metereologia/byDateRange?estacion=000003&fecfin=20150807&fecini=20150807`,   
-                    dataType: "json",
-                    success: function(result) {
-                        var jsonModel = new sap.ui.model.json.JSONModel(result);
-                        console.log("jsonModel");console.log(jsonModel);
-                        that.getView().byId("tblMain").setModel(jsonModel);
-                        //that.getView().byId("txtCount").setText(result.totalElements);
-                        //console.log(that.getView().byId("txtCount").getText());                        
-                        //that.loadMatchcodeFc();
-                    },
-                    error: function(response) {
-                        alert("error");
-                    }
-                }); */
             },
-            onFilter: async function (oEvent) {
+            _version:function(){
+               var version = this.getOwnerComponent().getManifestEntry("sap.app").applicationVersion;
+               this.getView().setModel(new sap.ui.model.json.JSONModel(version),"oVersion");
+            },
+            /* _getUserName: function() {
+                var userInfo = sap.ushell.Container;
+            }, */
+            _setFechas: function(){
+                let dFecha = new Date();
+                let fechas1 = this.getView().byId("dp1");
+                let fechas2 = this.getView().byId("dp2");
+                fechas1.setDateValue(dFecha);
+                fechas2.setDateValue(dFecha);
+            }, 
+            onFilter: function (oEvent) {
+                
                 let estacion = this.getView().byId("txtEstacion").getValue();
                 let fecini = this.getView().byId("dp1").getValue();
                 let fecfin = this.getView().byId("dp2").getValue();
-                console.log(estacion);
-                console.log(fecini);
-                console.log(fecfin);
+                console.log(`estacion: ${estacion}`);
+                console.log(`fecini: ${fecini}`);
+                console.log(`fecfin: ${fecfin}`);
                 //console.log(`fecIni: ${fecIni}`);
                 //this.getView().byId("txtCount").setText(""); 
                 //this.getView().byId("txtActual").setText(""); 
@@ -97,63 +84,40 @@ sap.ui.define([
                 };
 
                 var that = this;
-                //busyDialog.open();
                 this._consulta(dataQuery);
 
-                /* await new Promise(function (resolve, reject) {
-                    $.ajax({ 
-                        url:`https://www.agroparamonga.com/q_meteorologia/metereologia/byDateRange`,   
-                        dataType: "json",
-                        data:dataQuery,
-                        success: function(result) {
-                            var modelo = result;//.content;
-                            //var tamanio = modelo.lenght=undefined?0:modelo.lenght;
-                            var jsonModel = new sap.ui.model.json.JSONModel(modelo);
-                            that.getView().byId("tblMain").setModel(jsonModel);
-                            //that.getView().byId("txtCount").setText(result.totalElements);
-                            //that.getView().byId("txtActual").setText(`${tamanio} de`);
-                                 
-                        },
-                        error: function(response) {
-                            alert("error de consulta");
-                        }
-
-                    });
-                }); */
-
             },
-            _consulta:function(dataQuery){
+            _consulta: function(dataQuery){
                 var that=this;
+                busyDialog.open();
                 $.ajax({ 
-                    url:`https://www.agroparamonga.com/p_meteorologia/metereologia/byDateRange`,   
+                    url:`${PATH_SERVICE}/metereologia/byDateRange`,   
                     dataType: "json",
                     data:dataQuery,
                     success: function(result) {
                         var jsonModel = new sap.ui.model.json.JSONModel(result);
-                        console.log("jsonModel");console.log(jsonModel);
+                        //console.log("jsonModel");console.log(jsonModel);
                         that.getView().byId("tblMain").setModel(jsonModel);
+                        //resolve({data: jsonModel});
+                        busyDialog.close();
+                    },
+                    complete:function (data){
+                        console.log("Total>>");
+                        console.log(data.responseJSON.length);
+                        let total = data.responseJSON.length;
+                        if(total==0 || total == undefined){
+                            sap.m.MessageToast.show("No se han encontrado datos") ;
+                        }else{
+                            sap.m.MessageToast.show("Carga completa de Datos") ;
+                        }
+                        
                     },
                     error: function(response) {
                         alert("error");
+                        busyDialog.close();
                     }
                 });
             },
-            /*
-            _valoresNominales:function(){
-                return new Promise(function (resolve, reject) {
-                    $.ajax({ 
-                        url:`${PATH_SERVICE}/maestro/valorNominal`,   
-                        dataType: "json",
-                        success: function(result) {
-                            valNomModel = new sap.ui.model.json.JSONModel(result);
-                            resolve({data: 'Finalizado'});
-                        },
-                        error: function(response) {
-                            alert("error");
-                        }
-                    });
-                });
-            }*/
             _estaciones:async function(){
                 return new Promise(function (resolve, reject) {
                     $.ajax({ 
